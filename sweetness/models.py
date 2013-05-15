@@ -18,22 +18,47 @@ class Asset(models.Model):
                                      ('png', 'Image(png)',),
                                     ),
                             default='md',)
-    content = models.FileField(upload_to='content')
+    data = models.FileField(upload_to='data')
     metadata = JSONField()
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
-    
 
-class ExtendedContent(models.Model):
+
+class Content(models.Model):
     """
+    Model for collections of content, most all types will work this way.
+    """
+    assets = models.ManyToManyField(Asset, through='ContentAttribute')
+    slug = models.SlugField(max_length=200, unique=True, db_index=True)
+    metadata = JSONField()
+    spec = models.CharField(max_length=10,
+                            choices=(('article', 'Article',),
+                                     ('page', 'Page',),
+                                    ))
+
+
+class ContentAttribute(models.Model):
+    """
+    Model for relating Content back to Assets.
+    """
+    metadata_override = JSONField()
+    keyword = models.CharField(max_length=20)
+    content = models.ForeignKey(Content)
+    asset = models.ForeignKey(Asset)
+
+
+"""
+Old content
+class Content(models.Model):
+
     Base model for collections of content to be used in building compiled 
     content.
-    """
+
     slug = models.SlugField(max_length=200, unique=True, db_index=True)
     metadata = JSONField()
     
     def __init__(self, *args, **kwargs):
-        super(ExtendedContent, self).__init__(*args, **kwargs)
+        super(Content, self).__init__(*args, **kwargs)
               
     def render(self, context):
         raise NotImplemented("Not Implemented for %s" % self.__name__)
@@ -54,19 +79,20 @@ class ExtendedContent(models.Model):
 
 
 class CompiledContent(models.Model):
-    """
+
     Is the compiled version of ExtentedContent.
-    """
-    src = models.ForeignKey(ExtendedContent)
+
+    src = models.ForeignKey(Content)
     build_date = models.DateTimeField(auto_now=True)
     json = JSONField()
 
     
-class Article(ExtendedContent):
-    """
+class Article(Content):
+
     Test model for Articles.
-    """
+
     body = fields.ContentField(encodings=['md','html'], 
                     required_fields=['title','description'])
     publish_date = models.DateTimeField()
     
+"""

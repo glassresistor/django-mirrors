@@ -6,10 +6,11 @@ class AssetAdmin(admin.ModelAdmin):
     form = forms.AssetForm
 admin.site.register(models.Asset, AssetAdmin)
 
-class ExtendedContentAdmin(admin.ModelAdmin):
+class ContentAdmin(admin.ModelAdmin):
     pass
-admin.site.register(models.ExtendedContent, ExtendedContentAdmin)
+admin.site.register(models.Content, ContentAdmin)
 
-class ArticleAdmin(admin.ModelAdmin):
+class ContentAttributeAdmin(admin.ModelAdmin):
     pass
-admin.site.register(models.Article, ArticleAdmin)
+admin.site.register(models.ContentAttribute, ContentAttributeAdmin)
+

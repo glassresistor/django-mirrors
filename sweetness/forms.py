@@ -9,12 +9,12 @@ class AssetForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         #Clean this up it will get ugly.
         if len(args) > 0 and not args[1]:
-            cf = ContentFile(args[0].get('content'))
-            args = (args[0], {'content': UploadedFile(cf, args[0].get('slug') + '.md', size=cf.size)})
+            cf = ContentFile(args[0].get('data'))
+            args = (args[0], {'data': UploadedFile(cf, args[0].get('slug') + '.md', size=cf.size)})
         super(AssetForm, self).__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        self.files['content'].name = '%s.%s' % (
+        self.files['data'].name = '%s.%s' % (
             self.cleaned_data['slug'], self.cleaned_data['encoding'])
         return super(AssetForm, self).save(*args, **kwargs)
         
@@ -31,5 +31,5 @@ class AssetForm(forms.ModelForm):
     class Meta:
         model = models.Asset
         widgets = {
-            #'content': forms.HiddenInput,
+            #'data': forms.HiddenInput,
         }
