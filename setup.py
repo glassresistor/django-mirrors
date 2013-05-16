@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='django-sweetness',
-    version=__import__('sweetness').__version__,
+    name='django-mirrors',
+    version=__import__('mirrors').__version__,
     author='Mikela Clemmons',
     author_email='glassreistor@gmail.com',
     packages=find_packages(),
     include_package_data=True,
-    url='http://github.com/glassresistor/django-sweetness/',
+    url='http://github.com/glassresistor/django-mirrors/',
     license='BSD',
     description='awesome',
     classifiers=[
