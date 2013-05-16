@@ -1,6 +1,7 @@
 from tastypie import fields
 from tastypie.resources import ModelResource
-from . import models
+from mirrors import models
+
 
 class AssetResource(ModelResource):
 
@@ -27,7 +28,8 @@ class ContentResource(ModelResource):
         for attr in attrs:
             attr_dict = attr.data
             asset = attr_dict
-            data[asset['keyword']] = asset_dict['asset']
+            data[asset['keyword']] = asset['asset']
+        del bundle.data['assets']
         return bundle
     
     class Meta:
