@@ -14,3 +14,11 @@ class ContentAttributeAdmin(admin.ModelAdmin):
     pass
 admin.site.register(models.ContentAttribute, ContentAttributeAdmin)
 
+class ListAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(models.List, ListAdmin)
+
+class ListMemberAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(models.ListMember, ListMemberAdmin)
+

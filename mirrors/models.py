@@ -47,6 +47,26 @@ class ContentAttribute(models.Model):
     asset = models.ForeignKey(Asset)
 
 
+class List(models.Model):
+    """
+    Model of list names.
+    """
+    name = models.CharField(max_length=20)
+    slug = models.SlugField(max_length=200, unique=True, db_index=True)
+    description = models.TextField()
+    members = models.ManyToManyField(Content, through='ListMember')
+
+class ListMember(models.Model):
+    """
+    Ordered through model for List to Content
+    """    
+    list = models.ForeignKey(List)
+    content = models.ForeignKey(Content)
+    order = models.BigIntegerField()
+    
+    class Meta:
+        ordering = ('-order', 'list', 'content')
+
 """
 Old content
 class Content(models.Model):

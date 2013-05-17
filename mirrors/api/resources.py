@@ -32,9 +32,29 @@ class ContentResource(ModelResource):
         del bundle.data['assets']
         return bundle
     
+    def hydrate(self, bundle):
+        #TODO add unpack for keywords
+        return bundle
+    
     class Meta:
         queryset = models.Content.objects.all()
         resource_name = 'content'
+
+
+class ListMemberResource(ModelResource):
+    content = fields.ToOneField(ContentResource, 'content',full=True)
+    class Meta:
+        queryset = models.ListMember.objects.all()
+        resource_name = 'listmember'
+
+
+class ListResource(ModelResource):
+    members = fields.ToManyField(ListMemberResource,
+                attribute=lambda bundle: bundle.obj.members.through.objects.filter(
+                    list=bundle.obj) or bundle.obj.members, full=True)
+    class Meta:
+        queryset = models.List.objects.all()
+        resource_name = 'list'
 
 
 """
