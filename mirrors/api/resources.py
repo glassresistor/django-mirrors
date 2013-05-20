@@ -50,18 +50,9 @@ class ListMemberResource(ModelResource):
 
 class ListResource(ModelResource):
     members = fields.ToManyField(ListMemberResource,
-                attribute=lambda bundle: bundle.obj.members.through.objects.filter(
-                    list=bundle.obj) or bundle.obj.members, full=True)
+            attribute=lambda bundle: bundle.obj.members.through.objects.filter(
+            list=bundle.obj) or bundle.obj.members, full=True)
+
     class Meta:
         queryset = models.List.objects.all()
         resource_name = 'list'
-
-
-"""
-class ArticleResource(ModelResource):
-    body = fields.ForeignKey(AssetResource, 'body', full=True)
-    
-    class Meta:
-        queryset = models.Article.objects.all()
-        resource_name = 'article'
-"""

@@ -56,63 +56,14 @@ class List(models.Model):
     description = models.TextField()
     members = models.ManyToManyField(Content, through='ListMember')
 
+
 class ListMember(models.Model):
     """
     Ordered through model for List to Content
     """    
     list = models.ForeignKey(List)
     content = models.ForeignKey(Content)
-    order = models.BigIntegerField()
+    order = models.BigIntegerField(unique=True)
     
     class Meta:
         ordering = ('-order', 'list', 'content')
-
-"""
-Old content
-class Content(models.Model):
-
-    Base model for collections of content to be used in building compiled 
-    content.
-
-    slug = models.SlugField(max_length=200, unique=True, db_index=True)
-    metadata = JSONField()
-    
-    def __init__(self, *args, **kwargs):
-        super(Content, self).__init__(*args, **kwargs)
-              
-    def render(self, context):
-        raise NotImplemented("Not Implemented for %s" % self.__name__)
-
-    def compile_src(self):
-        dictionary = {}
-        for field in self._meta.fields:
-            value = getattr(self, field.name)
-            if issubclass(field.__class__, fields.ContentField):
-                item = {
-                    'metadata': value.metadata, 
-                    'content': value.content.url,
-                }
-            else:
-                item = value
-            dictionary[field.name] = item       
-        return dictionary
-
-
-class CompiledContent(models.Model):
-
-    Is the compiled version of ExtentedContent.
-
-    src = models.ForeignKey(Content)
-    build_date = models.DateTimeField(auto_now=True)
-    json = JSONField()
-
-    
-class Article(Content):
-
-    Test model for Articles.
-
-    body = fields.ContentField(encodings=['md','html'], 
-                    required_fields=['title','description'])
-    publish_date = models.DateTimeField()
-    
-"""
