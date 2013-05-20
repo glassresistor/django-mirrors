@@ -3,7 +3,7 @@ from . import models, forms
 
 
 class AssetAdmin(admin.ModelAdmin):
-    form = forms.AssetForm
+    pass #form = forms.AssetForm
 admin.site.register(models.Asset, AssetAdmin)
 
 class ContentAdmin(admin.ModelAdmin):

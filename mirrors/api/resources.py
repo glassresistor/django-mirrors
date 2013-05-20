@@ -22,6 +22,7 @@ class ContentResource(ModelResource):
                 attribute=lambda bundle: bundle.obj.assets.through.objects.filter(
                     content=bundle.obj) or bundle.obj.assets, full=True)
 
+    """
     def dehydrate(self, bundle):
         data = bundle.data
         attrs = data['assets']
@@ -32,9 +33,15 @@ class ContentResource(ModelResource):
         del bundle.data['assets']
         return bundle
     
+    
     def hydrate(self, bundle):
         #TODO add unpack for keywords
         return bundle
+    
+    def build_schema(self):
+        schema = super(ContentResource,self).build_schema()
+        return schema
+    """
     
     class Meta:
         queryset = models.Content.objects.all()
