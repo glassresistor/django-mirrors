@@ -18,7 +18,7 @@ class Asset(models.Model):
                                      ('png', 'Image(png)',),
                                     ),
                             default='md',)
-    data = models.BinaryField()
+    data = models.FileField(upload_to='assets')
     metadata = JSONField()
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
