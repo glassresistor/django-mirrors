@@ -3,8 +3,6 @@ from django.core.exceptions import ValidationError
 from jsonfield import JSONField
 from tastypie.serializers import Serializer
 
-from . import fields
-
 
 class Asset(models.Model):
     """
@@ -45,6 +43,10 @@ class ContentAttribute(models.Model):
     keyword = models.CharField(max_length=20)
     content = models.ForeignKey(Content)
     asset = models.ForeignKey(Asset)
+    order = models.BigIntegerField()
+
+    class Meta:
+        ordering = ('content', '-order',)
 
 
 class List(models.Model):
@@ -63,7 +65,7 @@ class ListMember(models.Model):
     """    
     list = models.ForeignKey(List)
     content = models.ForeignKey(Content)
-    order = models.BigIntegerField(unique=True)
+    order = models.BigIntegerField()
     
     class Meta:
-        ordering = ('-order', 'list', 'content')
+        ordering = ('list', '-order',)
