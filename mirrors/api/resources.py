@@ -2,7 +2,7 @@ from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from mirrors import models
-
+from django.db.models import get_model
 
 class MultipartResource(object):
     def deserialize(self, request, data, format=None):
@@ -20,64 +20,71 @@ class MultipartResource(object):
         return super(MultipartResource, self).deserialize(request, data, format)
 
 
+class PolymorphicRelatedField(fields.ToOneField):
+        
+    def get_related_resource(self, related_instance):
+        """
+        Instaniates the related resource.
+        """
+        to = {
+            models.Asset: AssetResource,
+            models.Content: ContentResource,
+        }
+        related_model = get_model(related_instance._meta.app_label, 
+                           related_instance.__class__.__name__)
+        related_resource = to[related_model]()
+        # Fix the ``api_name`` if it's not present.
+        if related_resource._meta.api_name is None:
+            if self._resource and not self._resource._meta.api_name is None:
+                related_resource._meta.api_name = self._resource._meta.api_name
+
+        # Try to be efficient about DB queries.
+        related_resource.instance = related_instance
+        return related_resource
+
+
 class AssetResource(MultipartResource, ModelResource):
 
     class Meta:
         queryset = models.Asset.objects.all()
         resource_name = 'asset'
         authorization= Authorization()
-        
+
+
+class SlugResource(ModelResource):
+
+    class Meta:
+        queryset = models.Slug.objects.all()
+        resource_name = 'slug'
+                
 
 class ContentAttributeResource(ModelResource):
-    asset = fields.ToOneField(AssetResource, 'asset',full=True)
+    attribute = PolymorphicRelatedField(SlugResource, 'attribute',full=True)
     class Meta:
         queryset = models.ContentAttribute.objects.all()
         resource_name = 'contentattribute'
+        authorization= Authorization()
+
+
+class ListMemberResource(ModelResource):
+    member = PolymorphicRelatedField(SlugResource, 'member',full=True)
+    class Meta:
+        queryset = models.ListMember.objects.all()
+        resource_name = 'listmember'
+        authorization= Authorization()
 
 
 class ContentResource(ModelResource):
-    assets = fields.ToManyField(ContentAttributeResource,
-                attribute=lambda bundle: bundle.obj.assets.through.objects.filter(
-                    content=bundle.obj) or bundle.obj.assets, full=True)
-
-    """
-    def dehydrate(self, bundle):
-        data = bundle.data
-        attrs = data['assets']
-        for attr in attrs:
-            attr_dict = attr.data
-            asset = attr_dict
-            data[asset['keyword']] = asset['asset']
-        del bundle.data['assets']
-        return bundle
-    
-    
-    def hydrate(self, bundle):
-        #TODO add unpack for keywords
-        return bundle
-    
-    def build_schema(self):
-        schema = super(ContentResource,self).build_schema()
-        return schema
-    """
+    attributes = fields.ToManyField(ContentAttributeResource,
+                attribute=lambda bundle: models.ContentAttribute.objects.filter(
+                    parent=bundle.obj
+                ), full=True, null=True)
+    members = fields.ToManyField(ListMemberResource,
+                attribute=lambda bundle: models.ListMember.objects.filter(
+                    list=bundle.obj
+                ), full=True, null=True)
     
     class Meta:
         queryset = models.Content.objects.all()
         resource_name = 'content'
-
-
-class ListMemberResource(ModelResource):
-    content = fields.ToOneField(ContentResource, 'content',full=True)
-    class Meta:
-        queryset = models.ListMember.objects.all()
-        resource_name = 'listmember'
-
-
-class ListResource(ModelResource):
-    members = fields.ToManyField(ListMemberResource,
-            attribute=lambda bundle: bundle.obj.members.through.objects.filter(
-            list=bundle.obj) or bundle.obj.members, full=True)
-
-    class Meta:
-        queryset = models.List.objects.all()
-        resource_name = 'list'
+        authorization= Authorization()
