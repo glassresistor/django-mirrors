@@ -12,7 +12,9 @@ class Slug(PolymorphicModel):
     Core namespace of assets and contents.  A kludge to avoid content types.
     """
     slug = models.SlugField(max_length=200, unique=True, db_index=True)
-        
+    
+    def __unicode__(self):
+        return u'%s %s' % (self.__class__.__name__, self.slug.replace('-',' ').title())
 
 class Asset(Slug):
     """
@@ -23,6 +25,7 @@ class Asset(Slug):
                             choices=(('md', 'Markdown',),
                                      ('html', 'HTML',),
                                      ('png', 'Image(png)',),
+                                     ('jpg', 'Image(jpg)',),
                                     ),
                             default='md',)
     data = models.FileField(upload_to='assets')
@@ -42,6 +45,8 @@ class Content(Slug):
                                     ))
     is_published = models.BooleanField(default=False, null=False)
 
+    def __unicode__(self):
+        return u'%s: %s' % (self.spec.title(), self.slug.replace('-',' ').title())
 
 class ContentAttribute(models.Model):
     """

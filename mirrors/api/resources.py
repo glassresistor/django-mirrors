@@ -3,6 +3,7 @@ from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from mirrors import models
 from django.db.models import get_model
+import json
 
 class MultipartResource(object):
     def deserialize(self, request, data, format=None):
@@ -43,7 +44,12 @@ class PolymorphicRelatedField(fields.ToOneField):
         return related_resource
 
 
-class AssetResource(MultipartResource, ModelResource):
+class MetaDataMixin(object):
+    def dehydrate_metadata(self, bundle):
+        return bundle.obj.metadata
+
+
+class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
 
     class Meta:
         queryset = models.Asset.objects.all()
@@ -58,7 +64,7 @@ class SlugResource(ModelResource):
         resource_name = 'slug'
                 
 
-class ContentAttributeResource(ModelResource):
+class ContentAttributeResource(MetaDataMixin, ModelResource):
     attribute = PolymorphicRelatedField(SlugResource, 'attribute',full=True)
     class Meta:
         queryset = models.ContentAttribute.objects.all()
@@ -74,7 +80,7 @@ class ListMemberResource(ModelResource):
         authorization= Authorization()
 
 
-class ContentResource(ModelResource):
+class ContentResource(MetaDataMixin, ModelResource):
     attributes = fields.ToManyField(ContentAttributeResource,
                 attribute=lambda bundle: models.ContentAttribute.objects.filter(
                     parent=bundle.obj
