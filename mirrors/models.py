@@ -40,7 +40,7 @@ class Content(Slug):
                             choices=(('article', 'Article',),
                                      ('page', 'Page',),
                                     ))
-    is_published = models.BooleanField(default=False, required=True)
+    is_published = models.BooleanField(default=False, null=False)
 
 
 class ContentAttribute(models.Model):
