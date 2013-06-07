@@ -21,7 +21,7 @@ class Asset(Slug):
     """
     encoding = models.CharField(max_length=5,
                             choices=(('md', 'Markdown',),
-                                     #('html', 'HTML',),s
+                                     ('html', 'HTML',),
                                      ('png', 'Image(png)',),
                                     ),
                             default='md',)
