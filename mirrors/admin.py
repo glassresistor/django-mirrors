@@ -2,11 +2,11 @@ from django.contrib import admin
 from . import models, forms
 
 class SlugAdmin(admin.ModelAdmin):
-    pass #form = forms.AssetForm
+    pass
 admin.site.register(models.Slug, SlugAdmin)
 
 class AssetAdmin(admin.ModelAdmin):
-    pass #form = forms.AssetForm
+    form = forms.AssetForm
 admin.site.register(models.Asset, AssetAdmin)
 
 class ContentAdmin(admin.ModelAdmin):

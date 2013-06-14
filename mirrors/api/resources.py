@@ -5,6 +5,7 @@ from mirrors import models
 from django.db.models import get_model
 import json
 
+
 class MultipartResource(object):
     def deserialize(self, request, data, format=None):
         if not format:
@@ -50,6 +51,10 @@ class MetaDataMixin(object):
 
 
 class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
+    def deserialize(self, request, data, format=None):
+        data = super(AssetResource, self).deserialize(request, data, format)
+        data['data'] = data['data'].read()
+        return data
 
     class Meta:
         queryset = models.Asset.objects.all()

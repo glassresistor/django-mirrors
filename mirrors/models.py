@@ -5,6 +5,7 @@ from jsonfield import JSONField
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from djorm_pgbytea.fields import ByteaField
 
 
 class Slug(PolymorphicModel):
@@ -29,7 +30,7 @@ class Asset(Slug):
                                      ('jpg', 'Image(jpg)',),
                                     ),
                             default='md',)
-    data = models.FileField(upload_to='assets')
+    data = ByteaField(null=False)
     metadata = JSONField()
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
