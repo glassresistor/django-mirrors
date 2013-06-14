@@ -53,7 +53,7 @@ class MetaDataMixin(object):
 class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
     def deserialize(self, request, data, format=None):
         data = super(AssetResource, self).deserialize(request, data, format)
-        data['data'] = data['data'].read()
+        data['data'] = buffer(data['data'].read())
         return data
 
     class Meta:
