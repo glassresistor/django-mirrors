@@ -16,6 +16,7 @@ class Slug(PolymorphicModel):
     def __unicode__(self):
         return u'%s %s' % (self.__class__.__name__, self.slug.replace('-',' ').title())
 
+
 class Asset(Slug):
     """
     Core model for storing content text or binary with json encoded metadata.
@@ -47,6 +48,7 @@ class Content(Slug):
 
     def __unicode__(self):
         return u'%s: %s' % (self.spec.title(), self.slug.replace('-',' ').title())
+
 
 class ContentAttribute(models.Model):
     """

@@ -89,6 +89,21 @@ class ContentResource(MetaDataMixin, ModelResource):
                 attribute=lambda bundle: models.ListMember.objects.filter(
                     list=bundle.obj
                 ), full=True, null=True)
+    """
+    def dehydrate_attributes(self, bundle):
+        members = super(ContentResource, self).dehydrate_attributes(bundle)
+        mdict = {}
+        for member in members:
+            mdict[member['keyword']] = member
+        return mdict
+    """
+    def dehydrate(self, bundle):
+        mdict = {}
+        for attribute in bundle.data['attributes']:
+            mdict[attribute.data['keyword']] = attribute
+        bundle.data['attributes'] = mdict
+        return bundle
+    
     
     class Meta:
         queryset = models.Content.objects.all()
