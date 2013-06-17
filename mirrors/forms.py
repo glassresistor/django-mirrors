@@ -5,16 +5,9 @@ from . import models, widgets
 
 
 class AssetForm(forms.ModelForm):
+    data = widgets.ByteaInput()
+    def clean_data(self):
+        return self.cleaned_data['data']
 
-    def __init__(self, *args, **kwargs):
-
-        super(AssetForm, self).__init__(*args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        return super(AssetForm, self).save(*args, **kwargs)
-        
     class Meta:
         model = models.Asset
-        widgets = {
-            'data': widgets.ByteaInput(),
-        }

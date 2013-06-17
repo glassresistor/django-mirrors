@@ -1,16 +1,30 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
+from StringIO import StringIO
+from PIL import Image
 
 from django.test import TestCase
+from django.test.client import RequestFactory
 
+from mirrors import forms
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
+class AssetSaveTest(TestCase):
+    def test_asset_save(self):
         """
-        Tests that 1 + 1 always equals 2.
+        Tests saving assets through the asset form(for admin mostly)
         """
-        self.assertEqual(1 + 1, 2)
+        factory = RequestFactory()
+
+        file_obj = StringIO()
+        image = Image.new("RGBA", size=(50,50), color=(256,0,0))
+        image.save(file_obj, 'png')
+        file_obj.name = 'test.png'
+        file_obj.seek(0)
+
+        request = factory.post('/', {
+            'slug': 'test', 
+            'encoding': 'jpg',
+            'metadata': '{}',
+            'data': file_obj
+        })
+        form = forms.AssetForm(request.POST, request.FILES)
+        asset = form.save()
+        self.assertEqual(asset.data, file_obj.read())
