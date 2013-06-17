@@ -27,4 +27,5 @@ class AssetSaveTest(TestCase):
         })
         form = forms.AssetForm(request.POST, request.FILES)
         asset = form.save()
+        file_obj.seek(0)
         self.assertEqual(asset.data, file_obj.read())
