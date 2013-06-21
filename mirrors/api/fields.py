@@ -9,4 +9,5 @@ class ByteaField(fields.CharField):
     help_text = 'Unicode string data. Ex: "Hello World"'
 
     def convert(self, value):
-            return None
+        import ipdb; ipdb.set_trace()
+        return None

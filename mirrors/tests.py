@@ -7,7 +7,7 @@ from django.test.client import RequestFactory
 from mirrors import forms
 
 class AssetSaveTest(TestCase):
-    def test_asset_save(self):
+    def test_asset_form_save(self):
         """
         Tests saving assets through the asset form(for admin mostly)
         """
@@ -29,3 +29,6 @@ class AssetSaveTest(TestCase):
         asset = form.save()
         file_obj.seek(0)
         self.assertEqual(asset.data, file_obj.read())
+        
+    def test_asset_api_post(self):
+        pass #TODO    

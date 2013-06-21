@@ -51,7 +51,7 @@ class MetaDataMixin(object):
 
 
 class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
-    data = api_fields.ByteaField()
+    data = api_fields.ByteaField(attribute='data')
     data_url = fields.CharField(attribute='data_url', readonly=True)
 
     def deserialize(self, request, data, format=None):
@@ -64,7 +64,7 @@ class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
         queryset = models.Asset.objects.all()
         resource_name = 'asset'
         authorization= Authorization()
-
+        excludes = ['data']
 
 class SlugResource(ModelResource):
 
