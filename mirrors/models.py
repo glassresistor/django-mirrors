@@ -1,3 +1,5 @@
+import mimetypes
+
 from polymorphic import PolymorphicModel
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -6,7 +8,7 @@ from jsonfield import JSONField
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from djorm_pgbytea.fields import ByteaField
-
+from django.core.urlresolvers import reverse
 
 class Slug(PolymorphicModel):
     """
@@ -18,22 +20,34 @@ class Slug(PolymorphicModel):
         return u'%s %s' % (self.__class__.__name__, self.slug.replace('-',' ').title())
 
 
+class AssetField(ByteaField):
+    """
+    Shim to make this work like filefield TODO: make this configurable
+    """
+    @property
+    def url(self):
+        return self.get_absolute_url()
+
+
 class Asset(Slug):
     """
     Core model for storing content text or binary with json encoded metadata.
     FileField abstraction offers easy alteration of storage backends.
     """
     encoding = models.CharField(max_length=5,
-                            choices=(('md', 'Markdown',),
-                                     ('html', 'HTML',),
-                                     ('png', 'Image(png)',),
-                                     ('jpg', 'Image(jpg)',),
-                                    ),
-                            default='md',)
-    data = ByteaField(null=False)
+                            choices=mimetypes.types_map.items(),
+                            default='.md')
+    data = AssetField(null=False)
     metadata = JSONField()
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
+
+    @property
+    def data_url(self):
+        return self.get_absolute_url()
+
+    def get_absolute_url(self):
+        return reverse('asset_media', args=[self.slug])
 
 
 class Content(Slug):

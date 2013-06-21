@@ -21,7 +21,7 @@ class AssetSaveTest(TestCase):
 
         request = factory.post('/', {
             'slug': 'test', 
-            'encoding': 'jpg',
+            'encoding': '.jpg',
             'metadata': '{}',
             'data': file_obj
         })

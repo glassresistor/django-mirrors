@@ -1,10 +1,10 @@
+import json
 from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from mirrors import models
 from django.db.models import get_model
-import json
-
+from mirrors.api import fields as api_fields
 
 class MultipartResource(object):
     def deserialize(self, request, data, format=None):
@@ -51,10 +51,14 @@ class MetaDataMixin(object):
 
 
 class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
+    data = api_fields.ByteaField()
+    data_url = fields.CharField(attribute='data_url', readonly=True)
+
     def deserialize(self, request, data, format=None):
         data = super(AssetResource, self).deserialize(request, data, format)
         data['data'] = buffer(data['data'].read())
         return data
+
 
     class Meta:
         queryset = models.Asset.objects.all()
