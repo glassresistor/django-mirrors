@@ -20,15 +20,6 @@ class Slug(PolymorphicModel):
         return u'%s %s' % (self.__class__.__name__, self.slug.replace('-',' ').title())
 
 
-class AssetField(ByteaField):
-    """
-    Shim to make this work like filefield TODO: make this configurable
-    """
-    @property
-    def url(self):
-        return self.get_absolute_url()
-
-
 class Asset(Slug):
     """
     Core model for storing content text or binary with json encoded metadata.
@@ -37,7 +28,7 @@ class Asset(Slug):
     encoding = models.CharField(max_length=5,
                             choices=mimetypes.types_map.items(),
                             default='.md')
-    data = AssetField(null=False)
+    data = ByteaField(null=False)
     metadata = JSONField()
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
