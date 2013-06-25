@@ -11,8 +11,8 @@ from mirrors import forms, models
 def build_fake_image():
     file_obj = StringIO()
     image = Image.new("RGBA", size=(50,50), color=(256,0,0))
-    image.save(file_obj, 'png')
-    file_obj.name = 'test.png'
+    image.save(file_obj, 'TIFF')
+    file_obj.name = 'test.tiff'
     file_obj.seek(0)
     return file_obj
 
