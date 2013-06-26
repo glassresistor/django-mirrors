@@ -1,10 +1,14 @@
 import json
+
+from django.db.models import get_model
+
 from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
+
 from mirrors import models
-from django.db.models import get_model
 from mirrors.api import fields as api_fields
+
 
 class MultipartResource(object):
     def deserialize(self, request, data, format=None):
@@ -28,7 +32,9 @@ class PolymorphicRelatedField(fields.ToOneField):
         """
         Instaniates the related resource.
         """
+
         to = {
+            models.Slug: SlugResource,
             models.Asset: AssetResource,
             models.Content: ContentResource,
         }
@@ -65,6 +71,7 @@ class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
         resource_name = 'asset'
         authorization= Authorization()
         excludes = ['data']
+
 
 class SlugResource(ModelResource):
 

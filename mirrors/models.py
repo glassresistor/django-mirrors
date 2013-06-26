@@ -1,6 +1,6 @@
 import mimetypes
+from model_utils.managers import InheritanceManager
 
-from polymorphic import PolymorphicModel
 from django.db import models
 from django.core.exceptions import ValidationError
 from jsonfield import JSONField
@@ -10,10 +10,21 @@ from django.contrib.contenttypes import generic
 from djorm_pgbytea.fields import ByteaField
 from django.core.urlresolvers import reverse
 
-class Slug(PolymorphicModel):
+
+class AutoInheritanceManager(InheritanceManager):
+    def all(self, *subclasses):
+        return self.select_subclasses(*subclasses)
+
+    def get(self, *args, **kwargs):
+        return self.get_subclass(*args, **kwargs)
+
+
+class Slug(models.Model):
     """
     Core namespace of assets and contents.  A kludge to avoid content types.
     """
+    objects = AutoInheritanceManager() #to make it polymorphic
+
     slug = models.SlugField(max_length=200, unique=True, db_index=True)
     
     def __unicode__(self):
