@@ -6,6 +6,7 @@ from mirrors import models
 from django.db.models import get_model
 from mirrors.api import fields as api_fields
 
+
 class MultipartResource(object):
     def deserialize(self, request, data, format=None):
         if not format:
@@ -59,12 +60,12 @@ class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
         data['data'] = buffer(data['data'].read())
         return data
 
-
     class Meta:
         queryset = models.Asset.objects.all()
         resource_name = 'asset'
         authorization= Authorization()
         excludes = ['data']
+
 
 class SlugResource(ModelResource):
 
@@ -75,6 +76,7 @@ class SlugResource(ModelResource):
 
 class ContentAttributeResource(MetaDataMixin, ModelResource):
     attribute = PolymorphicRelatedField(SlugResource, 'attribute',full=True)
+    
     class Meta:
         queryset = models.ContentAttribute.objects.all()
         resource_name = 'contentattribute'
@@ -83,6 +85,7 @@ class ContentAttributeResource(MetaDataMixin, ModelResource):
 
 class ListMemberResource(ModelResource):
     member = PolymorphicRelatedField(SlugResource, 'member',full=True)
+    
     class Meta:
         queryset = models.ListMember.objects.all()
         resource_name = 'listmember'
@@ -105,7 +108,6 @@ class ContentResource(MetaDataMixin, ModelResource):
             mdict[attribute.data['keyword']] = attribute
         bundle.data['attributes'] = mdict
         return bundle
-    
     
     class Meta:
         queryset = models.Content.objects.all()
