@@ -26,7 +26,7 @@ def build_request_dict(file_obj):
     }
 
 
-class AssetSaveTest(ResourceTestCase): #ugh subclassing for asserts...
+class AssetTest(ResourceTestCase): #ugh subclassing for asserts...
     def assert_file_equals(self, data, file_obj):
         file_obj.seek(0)
         self.assertEqual(data, file_obj.read())
@@ -34,6 +34,7 @@ class AssetSaveTest(ResourceTestCase): #ugh subclassing for asserts...
     def assert_asset_same(self, req_dict, asset):
         req_dict['metadata'] = {}
         del req_dict['data']
+        req_dict['data_url'] = reverse('asset_media', args=[asset.slug])
         for key, value in req_dict.iteritems():
             self.assertEqual(value, getattr(asset, key))
 
@@ -61,4 +62,14 @@ class AssetSaveTest(ResourceTestCase): #ugh subclassing for asserts...
         self.assert_file_equals(asset.data, file_obj)
         self.assert_asset_same(request, asset)
         
-        
+    def test_asset_media_view(self):
+        file_obj = build_fake_image()
+        request = build_request_dict(file_obj.read()) #read for save
+        asset = models.Asset(**request)
+        asset.save()
+        self.assert_asset_same(request, asset)
+        url = reverse('asset_media', kwargs={
+            'slug': asset.slug,
+            })
+        response = self.client.get(url)
+        self.assert_file_equals(response.content, file_obj)

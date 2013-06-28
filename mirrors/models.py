@@ -10,6 +10,7 @@ from django.contrib.contenttypes import generic
 from djorm_pgbytea.fields import ByteaField
 from django.core.urlresolvers import reverse
 
+
 class Slug(PolymorphicModel):
     """
     Core namespace of assets and contents.  A kludge to avoid content types.

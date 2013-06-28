@@ -7,6 +7,6 @@ class ByteaField(fields.CharField):
     """
     dehydrated_type = 'string'
     help_text = 'Unicode string data. Ex: "Hello World"'
-
+    
     def convert(self, value):
         return None
