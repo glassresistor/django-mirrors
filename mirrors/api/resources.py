@@ -1,11 +1,12 @@
 import json
+import base64
 from tastypie import fields
 from tastypie.authorization import Authorization
 from tastypie.resources import ModelResource
 from mirrors import models
 from django.db.models import get_model
 from mirrors.api import fields as api_fields
-
+from mom import net
 
 class MultipartResource(object):
     def deserialize(self, request, data, format=None):
@@ -57,7 +58,11 @@ class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
 
     def deserialize(self, request, data, format=None):
         data = super(AssetResource, self).deserialize(request, data, format)
-        data['data'] = buffer(data['data'].read())
+        if format.startswith('multipart'):
+            data['data'] = buffer(data['data'].read())
+        else:
+            uri = data['data'].encode('ascii', 'ignore')
+            data['data'] = buffer(net.data_uri.data_uri_parse(uri)[0])
         return data
 
     class Meta:
