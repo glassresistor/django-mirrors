@@ -20,7 +20,8 @@ def build_fake_image():
 def build_request_dict(file_obj):
     return {
         'slug': 'test', 
-        'encoding': '.jpg',
+        'encoding': 'tiff',
+        'media_type': 'image',
         'metadata': '{}',
         'data': file_obj
     }
@@ -73,3 +74,4 @@ class AssetTest(ResourceTestCase): #ugh subclassing for asserts...
             })
         response = self.client.get(url)
         self.assert_file_equals(response.content, file_obj)
+        self.assertEqual(response.get('Content-Type'), asset.mimetype)

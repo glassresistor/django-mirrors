@@ -26,14 +26,17 @@ class Asset(Slug):
     Core model for storing content text or binary with json encoded metadata.
     FileField abstraction offers easy alteration of storage backends.
     """
-    encoding = models.CharField(max_length=5,
-                            choices=mimetypes.types_map.items(),
-                            default='.md')
+    encoding = models.CharField(max_length=10)
+    media_type = models.CharField(max_length=10)
     data = ByteaField(null=False)
     metadata = JSONField()
     created = models.DateTimeField(auto_now_add=True, editable=False)
     updated = models.DateTimeField(auto_now=True, editable=False)
 
+    @property
+    def mimetype(self):
+        return '%s/%s' % (self.media_type, self.encoding)
+        
     @property
     def data_url(self):
         return self.get_absolute_url()

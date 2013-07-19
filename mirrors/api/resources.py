@@ -70,7 +70,7 @@ class AssetResource(MultipartResource, MetaDataMixin, ModelResource):
         resource_name = 'asset'
         authorization= Authorization()
         excludes = ['data']
-
+        
 
 class SlugResource(ModelResource):
 
